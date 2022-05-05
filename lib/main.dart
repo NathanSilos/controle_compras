@@ -21,7 +21,7 @@ class FormularioCadastramento extends StatelessWidget {
   final TextEditingController _controladorCampoValor = TextEditingController();
 
   @override
-  Widget build(BuildContext) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Cadastramento de Gasto')),
       body: Column(
@@ -44,6 +44,7 @@ class FormularioCadastramento extends StatelessWidget {
 
               if (nomeGasto != null && valorGasto != null) {
                 final CompraCriada = Compra(nomeGasto, valorGasto);
+                Navigator.pop(context, CompraCriada);
               }
             },
           ),
@@ -81,25 +82,35 @@ class Editor extends StatelessWidget {
 }
 
 class ListaTransferencias extends StatelessWidget {
+  final List<Compra> _compras = [];
+
   @override
   Widget build(BuildContext context) {
+    _compras.add(Compra('teste', 100));
+    _compras.add(Compra('teste', 100));
     return Scaffold(
       appBar: AppBar(
         title: Text('Controle de Gastos'),
       ),
-      body: Column(
-        children: <Widget>[
-          ItemTransferencia(Compra('Mercado', 200.00)),
-          ItemTransferencia(Compra('Shopping', 400.00)),
-          ItemTransferencia(Compra('Farmacia', 100.00)),
-          ItemTransferencia(Compra('Futebol', 60.00)),
-        ],
+      body: ListView.builder(
+        itemCount: _compras.length,
+        itemBuilder: (context, indice) {
+          final compra = _compras[indice];
+
+          return ItemTransferencia(compra);
+        },
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
+            final Future<Compra?> future =
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
               return FormularioCadastramento();
             }));
+            future.then((compraRecebida) {
+              debugPrint('Chegou no Then do future.');
+              debugPrint('$compraRecebida');
+              _compras.add(compraRecebida!);
+            });
           }, // null function
           child: Icon(Icons.add)),
     );
