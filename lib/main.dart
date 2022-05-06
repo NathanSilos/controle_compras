@@ -100,8 +100,6 @@ class ListaTransferencias extends StatefulWidget {
 class ListaTransferenciaState extends State<ListaTransferencias> {
   @override
   Widget build(BuildContext context) {
-    widget._compras.add(Compra('teste', 100));
-    widget._compras.add(Compra('teste', 100));
     debugPrint('Valor retornado: $widget._compras');
     return Scaffold(
       appBar: AppBar(
@@ -126,6 +124,7 @@ class ListaTransferenciaState extends State<ListaTransferencias> {
               debugPrint('Chegou no then do future.');
               debugPrint('$compraRecebida');
               widget._compras.add(compraRecebida!);
+              setState(() {});
             });
           }, // null function
           child: Icon(Icons.add)),
