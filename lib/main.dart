@@ -1,4 +1,4 @@
-import 'dart:html';
+//import 'dart:html';
 
 import 'package:flutter/material.dart';
 
@@ -34,7 +34,8 @@ class FormularioCadastramento extends StatelessWidget {
               controlador: _controladorCampoValor,
               rotulo: 'Valor',
               dica: '0.00',
-              icone: Icons.monetization_on),
+              icone: Icons.monetization_on,
+              tipo_campo: 'number'),
           ElevatedButton(
             child: Text('Confirmar'),
             onPressed: () {
@@ -59,8 +60,10 @@ class Editor extends StatelessWidget {
   final String? rotulo;
   final String? dica;
   final IconData? icone;
+  final String? tipo_campo;
 
-  Editor({this.controlador, this.rotulo, this.dica, this.icone});
+  Editor(
+      {this.controlador, this.rotulo, this.dica, this.icone, this.tipo_campo});
 
   @override
   Widget build(BuildContext context) {
@@ -76,26 +79,39 @@ class Editor extends StatelessWidget {
           labelText: rotulo,
           hintText: dica,
         ),
+        keyboardType:
+            // Condição ? Se verdadeira : Se falso
+            tipo_campo == 'number' ? TextInputType.number : null,
       ),
     );
   }
 }
 
-class ListaTransferencias extends StatelessWidget {
+class ListaTransferencias extends StatefulWidget {
   final List<Compra> _compras = [];
 
   @override
+  State<StatefulWidget> createState() {
+    debugPrint('$_compras');
+    return ListaTransferenciaState();
+  }
+}
+
+class ListaTransferenciaState extends State<ListaTransferencias> {
+  @override
   Widget build(BuildContext context) {
-    _compras.add(Compra('teste', 100));
-    _compras.add(Compra('teste', 100));
+    widget._compras.add(Compra('teste', 100));
+    widget._compras.add(Compra('teste', 100));
+    debugPrint('Valor retornado: $widget._compras');
     return Scaffold(
       appBar: AppBar(
         title: Text('Controle de Gastos'),
       ),
       body: ListView.builder(
-        itemCount: _compras.length,
+        itemCount: widget._compras.length,
         itemBuilder: (context, indice) {
-          final compra = _compras[indice];
+          final compra = widget._compras[indice];
+          debugPrint('$compra');
 
           return ItemTransferencia(compra);
         },
@@ -107,9 +123,9 @@ class ListaTransferencias extends StatelessWidget {
               return FormularioCadastramento();
             }));
             future.then((compraRecebida) {
-              debugPrint('Chegou no Then do future.');
+              debugPrint('Chegou no then do future.');
               debugPrint('$compraRecebida');
-              _compras.add(compraRecebida!);
+              widget._compras.add(compraRecebida!);
             });
           }, // null function
           child: Icon(Icons.add)),
