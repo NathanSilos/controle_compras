@@ -10,7 +10,11 @@ class ByteBankApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(body: ListaTransferencias()),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)
+            .copyWith(secondary: Colors.green[700]),
+      ),
+      home: ListaTransferencias(),
     );
   }
 }
@@ -24,32 +28,34 @@ class FormularioCadastramento extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Cadastramento de Gasto')),
-      body: Column(
-        children: <Widget>[
-          Editor(
-              controlador: _controladorCampoNomeGasto,
-              rotulo: 'Nome do Gasto',
-              dica: 'Mercado'),
-          Editor(
-              controlador: _controladorCampoValor,
-              rotulo: 'Valor',
-              dica: '0.00',
-              icone: Icons.monetization_on,
-              tipo_campo: 'number'),
-          ElevatedButton(
-            child: Text('Confirmar'),
-            onPressed: () {
-              final String nomeGasto = _controladorCampoNomeGasto.text;
-              final double valorGasto =
-                  double.parse(_controladorCampoValor.text);
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Editor(
+                controlador: _controladorCampoNomeGasto,
+                rotulo: 'Nome do Gasto',
+                dica: 'Mercado'),
+            Editor(
+                controlador: _controladorCampoValor,
+                rotulo: 'Valor',
+                dica: '0.00',
+                icone: Icons.monetization_on,
+                tipo_campo: 'number'),
+            ElevatedButton(
+              child: Text('Confirmar'),
+              onPressed: () {
+                final String nomeGasto = _controladorCampoNomeGasto.text;
+                final double valorGasto =
+                    double.parse(_controladorCampoValor.text);
 
-              if (nomeGasto != null && valorGasto != null) {
-                final CompraCriada = Compra(nomeGasto, valorGasto);
-                Navigator.pop(context, CompraCriada);
-              }
-            },
-          ),
-        ],
+                if (nomeGasto != null && valorGasto != null) {
+                  final CompraCriada = Compra(nomeGasto, valorGasto);
+                  Navigator.pop(context, CompraCriada);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -121,10 +127,11 @@ class ListaTransferenciaState extends State<ListaTransferencias> {
               return FormularioCadastramento();
             }));
             future.then((compraRecebida) {
-              debugPrint('Chegou no then do future.');
-              debugPrint('$compraRecebida');
-              widget._compras.add(compraRecebida!);
-              setState(() {});
+              if (compraRecebida != null) {
+                setState(() {
+                  widget._compras.add(compraRecebida!);
+                });
+              }
             });
           }, // null function
           child: Icon(Icons.add)),
